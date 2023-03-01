@@ -6,15 +6,12 @@ import { mapObject } from '../lib/utils/objelity';
 export class DogToCatService {
   public static readonly MATCH_VALUE = 'dog';
   public static readonly REPLACE_VALUE = 'cat';
-  private readonly dogToCat: DogToCat = { payload: '' };
+  private readonly dogToCat: DogToCat = { payload: {} };
 
   create(dogToCat: DogToCat) {
-    Object.assign(this.dogToCat, dogToCat);
+    const { payload } = dogToCat;
 
-    const { payload } = this.dogToCat;
-    // TODO: FUTURE DEVELOPMENT -> handle case where payload invalid with 400 Bad Request
-    const payloadObj = JSON.parse(payload);
-    const transformedPayloadObj = mapObject(payloadObj, (val, path) => {
+    this.dogToCat.payload = mapObject(payload, (val, path) => {
       if (val === DogToCatService.MATCH_VALUE) {
         return { [path]: DogToCatService.REPLACE_VALUE };
       }
@@ -24,7 +21,6 @@ export class DogToCatService {
       };
     });
 
-    this.dogToCat.payload = JSON.stringify(transformedPayloadObj);
     return this.dogToCat;
   }
 }

@@ -16,7 +16,54 @@ $ yarn install
 # development
 $ yarn run start
 # NOTE: Open a new console tab
-$ open http://localhost:3000
+$ open http://localhost:3000/api # Should open app in your browser
+# 1. Click on POST /dog2cat
+# 2. Click on Try it out
+# 3. replace "Request body" e.g. 
+# Example Request body: 
+{
+   "payload":{
+      "a":1,
+      "b": "dog",
+      "c": "dog dog",
+      "d": "cat",
+      "e": "dog cat",
+      "f":{
+         "a": "dog",
+         "list":[
+            {
+               "x1": "dog",
+               "x2": "cat",
+               "x3": "doggdog"
+            }
+         ]
+      }
+   }
+}
+
+curl -X 'POST' \
+  'http://localhost:3000/dog2cat' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+   "payload":{
+      "a":1,
+      "b": "dog",
+      "c": "dog dog",
+      "d": "cat",
+      "e": "dog cat",
+      "f":{
+         "a": "dog",
+         "list":[
+            {
+               "x1": "dog",
+               "x2": "cat",
+               "x3": "doggdog"
+            }
+         ]
+      }
+   }
+}'
 
 # watch mode
 $ yarn run start:dev
@@ -40,6 +87,7 @@ $ yarn run test:cov
 
 ## Technicals
 
+- **Please Note** ~ I have never tried out `nestjs` but I felt that this project would be a great opportunity to try it out based on a small amount of research today. There might well be mistakes/omissions but I do hope it showcases some of my thought process.
 - In order to cater for arbitrary JSON payloads I have gone with the following solution:
   - Flatten json payload in order to greatly reduce the complexity of traversing deeply nested paths
   - map use of a callback mechanism for each deep path and check if value is precisely `dog` then replace value with `cat`

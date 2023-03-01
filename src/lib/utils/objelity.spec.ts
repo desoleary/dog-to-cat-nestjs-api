@@ -16,17 +16,6 @@ describe('objelity', () => {
       },
     };
     let _keys = deepKeys(obj);
-    console.log(
-      deepKeys({
-        a: 1,
-        b: 'dog',
-        c: 'dog dog',
-        d: 'cat',
-        e: 'dog cat',
-        f: { a: 'dog', list: [{ x1: 'dog', x2: 'cat', x3: 'doggdog' }] },
-      })
-    );
-
     expect(_keys).toEqual(['a.b.c.0', 'a.b.c.1', 'a.b.c.2', 'a.d', 'e.f.g']);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

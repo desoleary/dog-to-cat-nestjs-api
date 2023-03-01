@@ -26,11 +26,10 @@ describe('DogToCatController', () => {
       const appController = app.get(DogToCatController);
 
       const { payload } = await appController.create({
-        payload: JSON.stringify(input),
+        payload: input,
       });
 
-      const payloadObj = JSON.parse(payload);
-      expect(payloadObj).toEqual({
+      expect(payload).toEqual({
         a: 1,
         b: 'cat',
         c: 'dog dog',

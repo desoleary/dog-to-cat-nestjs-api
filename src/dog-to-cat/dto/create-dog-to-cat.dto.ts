@@ -1,3 +1,3 @@
 export class CreateDogToCatDto {
-  payload: string;
+  payload: object;
 }

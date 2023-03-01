@@ -26,7 +26,8 @@ export class DogToCatController {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Unable to complete your request. Please contact support.',
+          error: 'Unable to complete your request. Please contact support',
+          internalOnly: `${error}`, // TODO: add logging and remove internal error
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {

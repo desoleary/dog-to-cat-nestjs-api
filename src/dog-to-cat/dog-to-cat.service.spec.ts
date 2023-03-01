@@ -13,10 +13,9 @@ describe('DogToCatService', () => {
 
       it('returns payload unmodified ', () => {
         const service = new DogToCatService();
-        const { payload } = service.create({ payload: JSON.stringify(input) });
+        const { payload } = service.create({ payload: input });
 
-        const payloadObj = JSON.parse(payload);
-        expect(payloadObj).toEqual(input);
+        expect(payload).toEqual(input);
       });
     });
 
@@ -32,10 +31,9 @@ describe('DogToCatService', () => {
 
       it('returns payload with exact match dog replaced with cat', () => {
         const service = new DogToCatService();
-        const { payload } = service.create({ payload: JSON.stringify(input) });
+        const { payload } = service.create({ payload: input });
 
-        const payloadObj = JSON.parse(payload);
-        expect(payloadObj).toEqual({
+        expect(payload).toEqual({
           a: 1,
           b: 'cat',
           c: 'dog dog',
