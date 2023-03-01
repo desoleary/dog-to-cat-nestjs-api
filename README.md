@@ -1,34 +1,12 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-Dog to Cat API ~ Powered by [NestJS Framework](https://github.com/nestjs/nest)
+Dog to Cat API ~ Powered by [NestJS Framework](https://nestjs.com/)
 
 ## Installation
 
 ```bash
+$ git clone git@github.com:desoleary/dog-to-cat-nestjs-api.git
+$ cd dog-to-cat-nestjs-api
 $ yarn install
 ```
 
@@ -37,6 +15,8 @@ $ yarn install
 ```bash
 # development
 $ yarn run start
+# NOTE: Open a new console tab
+$ open http://localhost:3000
 
 # watch mode
 $ yarn run start:dev
@@ -49,11 +29,75 @@ $ yarn run start:prod
 
 ```bash
 # unit tests
-$ npm run test
+$ yarn run test
 
 # e2e tests
-$ npm run test:e2e
+$ yarn run test:e2e
 
 # test coverage
-$ npm run test:cov
+$ yarn run test:cov
 ```
+
+## Technicals
+
+- In order to cater for arbitrary JSON payloads I have gone with the following solution:
+  - Flatten json payload in order to greatly reduce the complexity of traversing deeply nested paths
+  - map use of a callback mechanism for each deep path and check if value is precisely `dog` then replace value with `cat`
+  - preserve any other values
+
+Example walkthrough:
+```typescript
+const originalPayload = {
+  a: 1,
+  b: 'dog',
+  c: 'dog dog',
+  d: 'cat',
+  e: 'dog cat',
+  f: { a: 'dog', list: [{ x1: 'dog', x2: 'cat', x3: 'doggdog' }] },
+}
+
+// flattened payload in order to simplify traversal of JSON payload
+const flattenedPayload = {
+  'a': 1,
+  'b': 'dog',
+  'c': 'dog dog',
+  'd': 'cat',
+  'e': 'dog cat',
+  'f.a': 'dog',
+  'f.list.0.x1': 'dog',
+  'f.list.0.x2': 'cat',
+  'f.list.0.x3': 'doggdog',
+}
+
+// we iterate through each flattened key value pairs and modify those that match our criteria e.g. /^dog$/
+const flattenedPayloadWithModifications = {
+  'a': 1,
+  'b': 'cat',
+  'c': 'dog dog',
+  'd': 'cat',
+  'e': 'dog cat',
+  'f.a': 'cat',
+  'f.list.0.x1': 'cat',
+  'f.list.0.x2': 'cat',
+  'f.list.0.x3': 'doggdog',
+}
+
+// undot/hydrate modified flattened payload
+const finalizedPayload = {
+  a: 1,
+  b: 'cat',
+  c: 'dog dog',
+  d: 'cat',
+  e: 'dog cat',
+  f: { a: 'cat', list: [{ x1: 'cat', x2: 'cat', x3: 'doggdog' }] },
+}
+```
+
+### Constraints / Future Development
+> Project is mainly for demonstration purposes I am avoiding such optimisations/maintainability
+
+- streaming payload in order to work on chunks of data
+- Authentication
+- timeouts
+  - for very large payloads it might make sense to offload to the likes of a message queue
+- Cypress E2E testing
